@@ -24,6 +24,7 @@
       "ja",
       "km",
       "ko",
+      "lt",
       "nl",
       "no",
       "pl",
@@ -43,7 +44,9 @@
   },
   "buckets": {
     "json": {
-      "include": ["packages/i18n/locales/[locale]/common.json"]
+      "include": [
+        "packages/i18n/locales/[locale]/common.json"
+      ]
     }
   },
   "$schema": "https://lingo.dev/schema/i18n.json"
