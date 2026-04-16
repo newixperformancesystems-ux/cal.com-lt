@@ -4180,7 +4180,6 @@
   "domain_name": "Domeno pavadinimas",
   "blocked": "Blokuota",
   "reported_by": "Pranešė",
-  "no_pending_reports": "Nėra laukiančių pranešimų",
   "most_recent": "Naujausias",
   "most_reports": "Daugiausia pranešimų",
   "spam": "Šiukšlės",
@@ -4383,6 +4382,7 @@
   "location_applied_to_hosts_other": "Vieta pritaikyta {{count}} organizatorių",
   "booking_audit_action": {
     "created": "Rezervuota su {{host}}",
+    "created_awaiting_host": "Rezervuota (laukiama organizatoriaus)",
     "created_with_seat": "Vieta rezervuota su {{host}}",
     "cancelled": "Atšaukta",
     "rescheduled": "Perplanuota {{oldDate}} -> <0>{{newDate}}</0>",
