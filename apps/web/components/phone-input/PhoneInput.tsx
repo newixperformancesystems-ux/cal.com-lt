@@ -1,16 +1,18 @@
 "use client";
 
-import { isSupportedCountry } from "libphonenumber-js";
 import type { CSSProperties } from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 import { useIsPlatform } from "@calcom/atoms/hooks/useIsPlatform";
 import { type CountryCode, useBookerStore } from "@calcom/features/bookings/Booker/store";
-import { trpc } from "@calcom/trpc/react";
 import classNames from "@calcom/ui/classNames";
 import { CUSTOM_PHONE_MASKS } from "./phone-masks";
+
+// LT fork: visi booking formai turi default Lithuanios (+370) veleleve.
+// Jei Booker store turi defaultPhoneCountry (event-level override), jis laimi.
+const FALLBACK_DEFAULT_COUNTRY: CountryCode = "lt";
 
 export type PhoneInputProps = {
   value?: string;
@@ -31,7 +33,7 @@ function BasePhoneInput({
   className = "",
   onChange,
   value,
-  defaultCountry = "us",
+  defaultCountry = FALLBACK_DEFAULT_COUNTRY,
   ...rest
 }: PhoneInputProps) {
   const isPlatform = useIsPlatform();
@@ -157,40 +159,9 @@ function BasePhoneInputWeb({
 
 const useDefaultCountry = () => {
   const defaultPhoneCountryFromStore = useBookerStore((state) => state.defaultPhoneCountry);
-  const [defaultCountry, setDefaultCountry] = useState<CountryCode>(defaultPhoneCountryFromStore || "us");
-  const query = trpc.viewer.public.countryCode.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    retry: false,
-  });
-
-  useEffect(
-    function refactorMeWithoutEffect() {
-      if (defaultPhoneCountryFromStore) {
-        setDefaultCountry(defaultPhoneCountryFromStore);
-        return;
-      }
-
-      const data = query.data;
-      if (!data?.countryCode) {
-        return;
-      }
-
-      if (isSupportedCountry(data?.countryCode)) {
-        setDefaultCountry(data.countryCode.toLowerCase() as CountryCode);
-      } else {
-        const navCountry = navigator.language.split("-")[1]?.toUpperCase();
-        if (navCountry && isSupportedCountry(navCountry)) {
-          setDefaultCountry(navCountry.toLowerCase() as CountryCode);
-        } else {
-          setDefaultCountry("us");
-        }
-      }
-    },
-    [query.data, defaultPhoneCountryFromStore]
-  );
-
-  return defaultCountry;
+  // LT fork: visiem lankytojam rodom Lietuvos veleleve pagal nutyletima.
+  // Jei event turi savo defaultPhoneCountry (nustatyta organizerio), jis vis tiek laimi.
+  return (defaultPhoneCountryFromStore || FALLBACK_DEFAULT_COUNTRY) as CountryCode;
 };
 
 export default BasePhoneInput;
